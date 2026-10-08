@@ -166,7 +166,7 @@ function stopStream(){
  $("status").textContent="Analysis stopped. Configure your market and click Start to begin again.";
  $("msg").className="toast";$("msg").textContent="";
 }
-function updateRunButton(){const b=$("toggleRun");if(!b)return;b.textContent=running?"⏹ Stop":"▶ Start";b.className=running?"stop":"";}\nfunction scheduleRender(){if(!running||renderTimer)return;renderTimer=setTimeout(()=>{renderTimer=null;renderAnalysis()},Number($("interval").value)*1000)}
+function updateRunButton(){const b=$("toggleRun");if(!b)return;b.textContent=running?"⏹ Stop":"▶ Start";b.className=running?"stop":"";}function scheduleRender(){if(!running||renderTimer)return;renderTimer=setTimeout(()=>{renderTimer=null;renderAnalysis()},Number($("interval").value)*1000)}
 function lastDigit(price){return Number(Number(price).toFixed(2).slice(-1))}
 function statsOf(arr){
  const digits=arr.map(lastDigit),total=digits.length,freq={};for(const d of digits)freq[d]=(freq[d]||0)+1;
