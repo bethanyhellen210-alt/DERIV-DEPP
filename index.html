@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DigitEdge — Deriv Digit Analyzer</title>
+<style>
+:root{--bg:#03050a;--bg2:#070b14;--panel:rgba(255,255,255,.04);--panel2:rgba(255,255,255,.015);--line:rgba(255,255,255,.1);--text:#e6edf7;--muted:#8ea1bd;--cyan:#7ad7ff;--green:#4ff0c4;--red:#ff5a78}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 20% 0%,#0f1a2e 0%,var(--bg2) 55%,var(--bg) 100%);color:var(--text)}
+body{padding:0}button,input,select{font:inherit}.hidden{display:none!important}
+#landing{max-width:1200px;margin:auto;padding:48px 16px 28px;text-align:center}
+.hero-wrap{max-width:1100px;margin:auto;padding:0 0 12px}.badge{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(0,255,200,.08);border:1px solid rgba(0,255,200,.35);color:var(--green);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-bottom:20px}
+.hero-title{font-size:clamp(2.2rem,7vw,3.4rem);font-weight:800;line-height:1.1;margin:0 0 16px;background:linear-gradient(90deg,#fff 0%,var(--cyan) 50%,var(--green) 100%);-webkit-background-clip:text;color:transparent}
+.hero-sub{font-size:1.05rem;color:#9fb0c8;max-width:720px;margin:0 auto 30px;line-height:1.6}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:1100px;margin:32px auto;padding:0}
+.feature-card,.gate-wrap,.signal-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px}
+.feature-card{text-align:left;padding:22px;transition:.2s}.feature-card:hover{transform:translateY(-3px);border-color:rgba(79,240,196,.45)}
+.feature-icon{font-size:1.8rem;margin-bottom:8px}.feature-title{font-size:1.05rem;font-weight:700;margin-bottom:6px}.feature-desc{font-size:.9rem;color:var(--muted);line-height:1.5}
+.gate-wrap{max-width:460px;margin:24px auto 48px;padding:28px 26px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5)}.gate-title{font-size:1.35rem;font-weight:700;margin-bottom:6px}.gate-sub{font-size:.88rem;color:var(--muted);margin-bottom:18px}
+input,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.15);color:var(--text);border-radius:10px;padding:12px 14px;outline:none}input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(79,240,196,.15)}
+button{cursor:pointer;border:0;border-radius:10px;padding:12px 16px;font-weight:700;background:linear-gradient(90deg,var(--green),#38b6ff);color:#041014;width:100%}button:hover{filter:brightness(1.08)}
+.footnote{text-align:center;color:#64748b;font-size:.8rem;line-height:1.6;margin-top:20px}
+#app{max-width:1400px;margin:auto;padding:18px 18px 30px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px;margin-bottom:18px}.title{font-size:1.5rem;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;color:transparent}.plan{color:var(--muted);font-size:.9rem;text-align:right}.logout{width:auto;margin-top:6px;padding:7px 12px;font-size:.85rem}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:18px}.sidebar{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:18px;height:max-content;position:sticky;top:12px}.sidebar h2{font-size:1.05rem;margin:0 0 18px}.field{margin-bottom:14px}.field label{display:block;color:var(--muted);font-size:.8rem;margin-bottom:7px}.range-row{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;margin-top:5px}.range-row b{color:var(--text)}input[type=range]{padding:0;border:0;box-shadow:none;background:transparent}.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.stop{background:linear-gradient(90deg,#ff5a78,#ff805a);color:#fff}.note{border-top:1px solid rgba(255,255,255,.08);margin-top:18px;padding-top:16px;color:#8ea1bd;font-size:.78rem;line-height:1.5}
+.status{margin-bottom:14px;color:var(--muted);font-size:.86rem}.status strong{color:var(--cyan)}
+.signal-card{padding:22px;border-color:rgba(255,255,255,.1)}.signal-card.start{border-color:rgba(79,240,196,.6);box-shadow:0 0 30px rgba(79,240,196,.15)}.signal-card.stop{border-color:rgba(255,90,120,.5)}
+.signal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}.label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.value{font-size:1.25rem;font-weight:800;margin-top:4px}.neutral{color:var(--cyan)}.green{color:var(--green)}.red{color:var(--red)}
+.reason{margin-top:16px;padding:14px 16px;border-radius:12px;background:rgba(122,215,255,.07);border:1px solid rgba(122,215,255,.2);color:#c8d8ee;font-size:.9rem;line-height:1.5}
+.content-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:18px}.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:18px}.panel h3{margin:0 0 16px;font-size:1rem}
+.chart{height:320px;display:flex;align-items:flex-end;gap:8px;padding:8px 4px 0}.bar-wrap{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;position:relative}.bar{width:100%;max-width:55px;background:linear-gradient(180deg,var(--cyan),#287ea8);border-radius:7px 7px 0 0;min-height:2px}.digit{position:absolute;bottom:-22px;font-size:.75rem;color:var(--muted)}
+.stats{display:grid;gap:8px}.metric{display:flex;justify-content:space-between;padding:11px 12px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.16)}.metric span{color:var(--muted);font-size:.83rem}.metric b{font-size:.9rem}
+.streaks{margin-top:18px}.streak-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tick{margin-top:16px;color:#64748b;font-size:.78rem}
+.toast{margin-top:12px;text-align:center;font-size:.84rem}.error{color:var(--red)}.ok{color:var(--green)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.signal-grid{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}}
+@media(max-width:560px){#landing{padding-top:30px}.feature-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}.streak-grid{grid-template-columns:repeat(2,1fr)}#app{padding:12px}.top{align-items:flex-start}.title{font-size:1.15rem}.chart{height:260px}}
+</style>
+</head>
+<body>
+<section id="landing">
+  <div class="hero-wrap">
+    <div class="badge">● Live Deriv Synthetic Indices</div>
+    <div class="hero-title">📊 DigitEdge<br>Analyze. Signal. Decide.</div>
+    <div class="hero-sub">Statistical Digit Analysis for Deriv Synthetic Indices. Real-time digit frequency, streak detection, even/odd bias, over/under pressure, and match/differ edge — all in one dashboard.</div>
+  </div>
+  <div class="feature-grid">
+    <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Live Tick Stream</div><div class="feature-desc">Sub-second updates straight from Deriv's WebSocket API. No lag, no refresh.</div></div>
+    <div class="feature-card"><div class="feature-icon">🔢</div><div class="feature-title">Digit Frequency Engine</div><div class="feature-desc">Full 0–9 histogram with hot/cold detection over a rolling window you control.</div></div>
+    <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Signal Generator</div><div class="feature-desc">Even/Odd, Over/Under, and Matches/Differs signals with statistical justification.</div></div>
+    <div class="feature-card"><div class="feature-icon">🧠</div><div class="feature-title">Reason Transparency</div><div class="feature-desc">Every signal ships with the exact frequency and streak numbers behind it.</div></div>
+    <div class="feature-card"><div class="feature-icon">📈</div><div class="feature-title">Multi-Market</div><div class="feature-desc">Switch between Volatility 10, 25, 50, 75, 100 and their 1-second variants.</div></div>
+    <div class="feature-card"><div class="feature-icon">🔐</div><div class="feature-title">Key-Protected Access</div><div class="feature-desc">Private build. Only authorized keys can unlock the dashboard.</div></div>
+  </div>
+  <div class="gate-wrap">
+    <div class="gate-title">🔑 Enter Access Key</div>
+    <div class="gate-sub">Paste your key below to unlock the analyzer.</div>
+    <input id="key" type="text" autocomplete="off" placeholder="DERIV-XXXX-XXXX">
+    <button id="unlock" style="margin-top:12px">Unlock Analyzer →</button>
+    <div id="keymsg" class="toast"></div>
+  </div>
+  <div class="footnote">DigitEdge is an educational analysis tool. Deriv synthetic indices are random — no signal guarantees profit. Trade responsibly.</div>
+</section>
+
+<section id="app" class="hidden">
+  <div class="top">
+    <div class="title">📊 DigitEdge — Analyzer</div>
+    <div><div class="plan">Plan: <b id="plan">—</b></div><button id="logout" class="logout">🚪 Logout</button></div>
+  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>⚙️ Controls</h2>
+      <div class="field"><label>Market</label><select id="market"></select></div>
+      <div class="field"><label>Contract Type</label><select id="contract"><option>Even/Odd</option><option>Over/Under</option><option>Matches/Differs</option></select></div>
+      <div class="field"><label>Target Digit (Matches/Differs)</label><input id="target" type="range" min="0" max="9" value="7"><div class="range-row"><span>0</span><b id="targetVal">7</b><span>9</span></div></div>
+      <div class="field"><label>Analysis Window (ticks)</label><input id="window" type="range" min="20" max="500" value="100"><div class="range-row"><span>20</span><b id="windowVal">100</b><span>500</span></div></div>
+      <div class="field"><label>Historical Ticks</label><input id="history" type="range" min="100" max="2000" value="500"><div class="range-row"><span>100</span><b id="historyVal">500</b><span>2000</span></div></div>
+      <div class="field"><label>Update Interval (sec)</label><input id="interval" type="range" min="2" max="30" value="5"><div class="range-row"><span>2</span><b id="intervalVal">5</b><span>30</span></div></div>
+      <div class="controls"><button id="start">▶ Start</button><button id="stop" class="stop">⏹ Stop</button></div>
+      <div class="note">⚠️ Synthetic indices are random. Signals are statistical, not predictive.</div>
+    </aside>
+    <main>
+      <div id="status" class="status">Configure your market and click <strong>Start</strong> to begin analysis.</div>
+      <div id="signal" class="signal-card stop">
+        <div class="signal-grid">
+          <div><div class="label">Market Type</div><div id="marketOut" class="value neutral">—</div></div>
+          <div><div class="label">Contract Type</div><div id="contractOut" class="value neutral">—</div></div>
+          <div><div class="label">Start / Stop</div><div id="startOut" class="value red">🔴 Stop</div></div>
+          <div><div class="label">Entry Point</div><div id="entryOut" class="value neutral">—</div></div>
+        </div>
+        <div id="reason" class="reason"><b>Reason:</b> No clear signal</div>
+      </div>
+      <div class="content-grid">
+        <div class="panel"><h3>Digit Frequency</h3><div id="chart" class="chart"></div></div>
+        <div class="panel"><h3>Quick Stats</h3><div class="stats">
+          <div class="metric"><span>Ticks Analyzed</span><b id="ticks">0</b></div>
+          <div class="metric"><span>Even %</span><b id="even">0.0%</b></div>
+          <div class="metric"><span>Odd %</span><b id="odd">0.0%</b></div>
+          <div class="metric"><span>Over 4 %</span><b id="over4">0.0%</b></div>
+          <div class="metric"><span>Under 5 %</span><b id="under5">0.0%</b></div>
+        </div></div>
+      </div>
+      <div class="panel streaks"><h3>Streaks</h3><div class="streak-grid">
+        <div class="metric"><span>Odd Streak</span><b id="oddStreak">0</b></div>
+        <div class="metric"><span>Even Streak</span><b id="evenStreak">0</b></div>
+        <div class="metric"><span>Over 4 Streak</span><b id="overStreak">0</b></div>
+        <div class="metric"><span>Under 5 Streak</span><b id="underStreak">0</b></div>
+      </div><div id="lastTick" class="tick">Last tick: —</div></div>
+      <div id="msg" class="toast"></div>
+    </main>
+  </div>
+</section>
+
+<script>
+const VALID_KEYS={
+ "DERIV-2026-ALPHA":{plan:"Pro",uses:9999},
+ "DERIV-2026-BETA":{plan:"Starter",uses:500},
+ "DERIV-2026-GUEST":{plan:"Demo",uses:50},
+ "MASTER-KEY-XYZ":{plan:"Admin",uses:99999}
+};
+const SYMBOLS={
+ "Volatility 10 Index":"R_10","Volatility 25 Index":"R_25","Volatility 50 Index":"R_50","Volatility 75 Index":"R_75","Volatility 100 Index":"R_100",
+ "Volatility 10 (1s) Index":"1HZ10V","Volatility 25 (1s) Index":"1HZ25V","Volatility 50 (1s) Index":"1HZ50V","Volatility 75 (1s) Index":"1HZ75V","Volatility 100 (1s) Index":"1HZ100V"
+};
+const DEFAULT_MARKET="Volatility 100 (1s) Index";
+let ws=null,running=false,prices=[],lastTick=null,renderTimer=null;
+const $=id=>document.getElementById(id);
+function showApp(plan){$("landing").classList.add("hidden");$("app").classList.remove("hidden");$("plan").textContent=plan}
+function showLanding(){stopStream();$("app").classList.add("hidden");$("landing").classList.remove("hidden")}
+function setRange(id,out){$(id).addEventListener("input",()=>$(out).textContent=$(id).value)}
+setRange("target","targetVal");setRange("window","windowVal");setRange("history","historyVal");setRange("interval","intervalVal");
+for(const name of Object.keys(SYMBOLS)){const o=document.createElement("option");o.value=name;o.textContent=name;if(name===DEFAULT_MARKET)o.selected=true;$("market").appendChild(o)}
+$("unlock").onclick=()=>{const k=$("key").value.trim().toUpperCase();if(VALID_KEYS[k]){localStorage.setItem("digitedge_key",k);$("keymsg").className="toast ok";$("keymsg").textContent="Access granted — "+VALID_KEYS[k].plan+" plan";showApp(VALID_KEYS[k].plan)}else{$("keymsg").className="toast error";$("keymsg").textContent="Invalid key. Please check and try again."}};
+$("key").addEventListener("keydown",e=>{if(e.key==="Enter")$("unlock").click()});
+$("logout").onclick=()=>{localStorage.removeItem("digitedge_key");stopStream();showLanding()};
+$("start").onclick=startStream;$("stop").onclick=stopStream;
+const saved=localStorage.getItem("digitedge_key");if(saved&&VALID_KEYS[saved])showApp(VALID_KEYS[saved].plan);
+
+function wsSend(obj){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj))}
+function startStream(){
+ if(running)return;
+ running=true;prices=[];lastTick=null;$("msg").textContent="Connecting to Deriv…";$("status").textContent="Connecting to Deriv live tick stream…";
+ const symbol=SYMBOLS[$("market").value];
+ ws=new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
+ ws.onopen=()=>{
+   $("msg").className="toast ok";$("msg").textContent="Connected to Deriv";
+   wsSend({ticks_history:symbol,count:Number($("history").value),end:"latest",style:"ticks",req_id:1});
+ };
+ ws.onmessage=e=>{
+   try{
+    const d=JSON.parse(e.data);
+    if(d.error){$("msg").className="toast error";$("msg").textContent="Deriv error: "+d.error.message;return}
+    if(d.msg_type==="history"){
+      const p=d.history?.prices||[],t=d.history?.times||[];
+      prices=p.map((q,i)=>({quote:Number(q),epoch:Number(t[i])}));scheduleRender();
+      wsSend({ticks:symbol,subscribe:1,req_id:2});
+    }else if(d.msg_type==="tick"&&d.tick){
+      lastTick={quote:Number(d.tick.quote),epoch:Number(d.tick.epoch)};prices.push(lastTick);
+      const max=Number($("history").value);if(prices.length>max)prices=prices.slice(-max);scheduleRender();
+    }
+   }catch(err){$("msg").className="toast error";$("msg").textContent="Message error: "+err.message}
+ };
+ ws.onerror=()=>{$("msg").className="toast error";$("msg").textContent="Deriv WebSocket connection error";$("status").textContent="Connection error. Press Start to retry."};
+ ws.onclose=()=>{if(running){$("msg").className="toast error";$("msg").textContent="Deriv disconnected";$("status").textContent="Deriv disconnected. Press Start to reconnect."}};
+}
+function stopStream(){
+ running=false;if(renderTimer){clearTimeout(renderTimer);renderTimer=null}if(ws){try{ws.close()}catch(e){}ws=null}
+ $("status").textContent="Analysis stopped. Configure your market and click Start to begin again.";
+ $("msg").className="toast";$("msg").textContent="";
+}
+function scheduleRender(){if(!running||renderTimer)return;renderTimer=setTimeout(()=>{renderTimer=null;renderAnalysis()},Number($("interval").value)*1000)}
+function lastDigit(price){return Number(Number(price).toFixed(2).slice(-1))}
+function statsOf(arr){
+ const digits=arr.map(lastDigit),total=digits.length,freq={};for(const d of digits)freq[d]=(freq[d]||0)+1;
+ let even=0,over=0;for(const d of digits){if(d%2===0)even++;if(d>=5)over++}
+ const streak=(pred)=>{let s=0;for(let i=digits.length-1;i>=0;i--){if(pred(digits[i]))s++;else break}return s};
+ return {total,digits,freq,even,odd:total-even,over,under:total-over,evenPct:total?even/total*100:0,oddPct:total?(total-even)/total*100:0,overPct:total?over/total*100:0,underPct:total?(total-over)/total*100:0,oddStreak:streak(d=>d%2===1),evenStreak:streak(d=>d%2===0),overStreak:streak(d=>d>=5),underStreak:streak(d=>d<=4),last:digits.at(-1)};
+}
+function analyze(arr,market,contract,target){
+ const recent=arr.length>Number($("window").value)?arr.slice(-Number($("window").value)):arr, s=statsOf(recent);
+ const out={market,contract,start:"Stop",entry:"—",reason:"No clear signal"};if(s.total<20){out.reason="Insufficient data ("+s.total+" ticks, need 20+)";return [out,s]}
+ if(contract==="Even/Odd"){
+  if(s.oddStreak>=3&&s.evenPct<45){out.start="Start";out.entry="Even";out.reason="Odd streak "+s.oddStreak+", even only "+s.evenPct.toFixed(1)+"% in last "+s.total}
+  else if(s.evenStreak>=3&&s.oddPct<45){out.start="Start";out.entry="Odd";out.reason="Even streak "+s.evenStreak+", odd only "+s.oddPct.toFixed(1)+"% in last "+s.total}
+  else out.reason="No edge. Even "+s.evenPct.toFixed(1)+"% / Odd "+s.oddPct.toFixed(1)+"% | Odd streak "+s.oddStreak+", Even streak "+s.evenStreak;
+ }else if(contract==="Over/Under"){
+  if(s.overPct>60){out.start="Start";out.entry="Over 4";out.reason="Over 4 frequency "+s.overPct.toFixed(1)+"% in last "+s.total+" ticks"}
+  else if(s.underPct>60){out.start="Start";out.entry="Under 5";out.reason="Under 5 frequency "+s.underPct.toFixed(1)+"% in last "+s.total+" ticks"}
+  else out.reason="No edge. Over 4 "+s.overPct.toFixed(1)+"% / Under 5 "+s.underPct.toFixed(1)+"%";
+ }else{
+  const pct=(s.freq[target]||0)/s.total*100;
+  if(pct<5){out.start="Start";out.entry="Differs "+target;out.reason="Digit "+target+" frequency "+pct.toFixed(1)+"% < 5% in last "+s.total+" ticks"}
+  else if(pct>15){out.start="Start";out.entry="Matches "+target;out.reason="Digit "+target+" frequency "+pct.toFixed(1)+"% > 15% in last "+s.total+" ticks"}
+  else out.reason="No edge. Digit "+target+" frequency "+pct.toFixed(1)+"%";
+ }
+ return [out,s];
+}
+function renderAnalysis(){
+ if(!prices.length)return;
+ const [sig,s]=analyze(prices,$("market").value,$("contract").value,Number($("target").value));
+ $("marketOut").textContent=sig.market;$("contractOut").textContent=sig.contract;$("entryOut").textContent=sig.entry;
+ $("startOut").textContent=(sig.start==="Start"?"🟢 ":"🔴 ")+sig.start;$("startOut").className="value "+(sig.start==="Start"?"green":"red");
+ $("reason").innerHTML="<b>Reason:</b> "+sig.reason;$("signal").className="signal-card "+(sig.start==="Start"?"start":"stop");
+ $("ticks").textContent=s.total;$("even").textContent=s.evenPct.toFixed(1)+"%";$("odd").textContent=s.oddPct.toFixed(1)+"%";$("over4").textContent=s.overPct.toFixed(1)+"%";$("under5").textContent=s.underPct.toFixed(1)+"%";
+ $("oddStreak").textContent=s.oddStreak;$("evenStreak").textContent=s.evenStreak;$("overStreak").textContent=s.overStreak;$("underStreak").textContent=s.underStreak;
+ const chart=$("chart");chart.innerHTML="";const max=Math.max(...Array.from({length:10},(_,d)=>s.freq[d]||0),1);
+ for(let d=0;d<10;d++){const wrap=document.createElement("div");wrap.className="bar-wrap";const bar=document.createElement("div");bar.className="bar";bar.style.height=((s.freq[d]||0)/max*100)+"%";const label=document.createElement("div");label.className="digit";label.textContent=d;wrap.append(bar,label);chart.appendChild(wrap)}
+ if(lastTick){const dt=new Date(lastTick.epoch*1000);$("lastTick").textContent="Last tick: "+lastTick.quote.toFixed(2)+" | Last digit: "+s.last+" | Time: "+dt.toLocaleTimeString()}
+ $("status").innerHTML="LIVE • <strong>"+s.total+" ticks analyzed</strong> • updates every "+$("interval").value+" sec";
+}
+</script>
+</body>
+</html>
