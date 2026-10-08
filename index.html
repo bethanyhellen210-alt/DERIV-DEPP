@@ -139,7 +139,7 @@ function startStream(){
  if(running)return;
  running=true;prices=[];lastTick=null;updateRunButton();$("msg").textContent="Connecting to Deriv…";$("status").textContent="Connecting to Deriv live tick stream…";
  const symbol=SYMBOLS[$("market").value];
- ws=new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
+ ws=new WebSocket("wss://ws.binaryws.com/websockets/v3");
  ws.onopen=()=>{
    $("msg").className="toast ok";$("msg").textContent="Connected to Deriv";
    wsSend({ticks_history:symbol,count:Number($("history").value),end:"latest",style:"ticks",req_id:1});
