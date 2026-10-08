@@ -74,7 +74,7 @@ button{cursor:pointer;border:0;border-radius:10px;padding:12px 16px;font-weight:
       <div class="field"><label>Analysis Window (ticks)</label><input id="window" type="range" min="20" max="500" value="100"><div class="range-row"><span>20</span><b id="windowVal">100</b><span>500</span></div></div>
       <div class="field"><label>Historical Ticks</label><input id="history" type="range" min="100" max="2000" value="500"><div class="range-row"><span>100</span><b id="historyVal">500</b><span>2000</span></div></div>
       <div class="field"><label>Update Interval (sec)</label><input id="interval" type="range" min="2" max="30" value="5"><div class="range-row"><span>2</span><b id="intervalVal">5</b><span>30</span></div></div>
-      <div class="controls"><button id="start">▶ Start</button><button id="stop" class="stop">⏹ Stop</button></div>
+      <div class="controls"><button id="toggleRun">▶ Start</button></div>
       <div class="note">⚠️ Synthetic indices are random. Signals are statistical, not predictive.</div>
     </aside>
     <main>
@@ -131,13 +131,13 @@ for(const name of Object.keys(SYMBOLS)){const o=document.createElement("option")
 $("unlock").onclick=()=>{const k=$("key").value.trim().toUpperCase();if(VALID_KEYS[k]){localStorage.setItem("digitedge_key",k);$("keymsg").className="toast ok";$("keymsg").textContent="Access granted — "+VALID_KEYS[k].plan+" plan";showApp(VALID_KEYS[k].plan)}else{$("keymsg").className="toast error";$("keymsg").textContent="Invalid key. Please check and try again."}};
 $("key").addEventListener("keydown",e=>{if(e.key==="Enter")$("unlock").click()});
 $("logout").onclick=()=>{localStorage.removeItem("digitedge_key");stopStream();showLanding()};
-$("start").onclick=startStream;$("stop").onclick=stopStream;
+$("toggleRun").onclick=()=>{if(running)stopStream();else startStream()};
 const saved=localStorage.getItem("digitedge_key");if(saved&&VALID_KEYS[saved])showApp(VALID_KEYS[saved].plan);
 
 function wsSend(obj){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj))}
 function startStream(){
  if(running)return;
- running=true;prices=[];lastTick=null;$("msg").textContent="Connecting to Deriv…";$("status").textContent="Connecting to Deriv live tick stream…";
+ running=true;prices=[];lastTick=null;updateRunButton();$("msg").textContent="Connecting to Deriv…";$("status").textContent="Connecting to Deriv live tick stream…";
  const symbol=SYMBOLS[$("market").value];
  ws=new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
  ws.onopen=()=>{
@@ -166,7 +166,7 @@ function stopStream(){
  $("status").textContent="Analysis stopped. Configure your market and click Start to begin again.";
  $("msg").className="toast";$("msg").textContent="";
 }
-function scheduleRender(){if(!running||renderTimer)return;renderTimer=setTimeout(()=>{renderTimer=null;renderAnalysis()},Number($("interval").value)*1000)}
+function updateRunButton(){const b=$("toggleRun");if(!b)return;b.textContent=running?"⏹ Stop":"▶ Start";b.className=running?"stop":"";}\nfunction scheduleRender(){if(!running||renderTimer)return;renderTimer=setTimeout(()=>{renderTimer=null;renderAnalysis()},Number($("interval").value)*1000)}
 function lastDigit(price){return Number(Number(price).toFixed(2).slice(-1))}
 function statsOf(arr){
  const digits=arr.map(lastDigit),total=digits.length,freq={};for(const d of digits)freq[d]=(freq[d]||0)+1;
