@@ -150,7 +150,7 @@ function startStream(){
     if(d.error){$("msg").className="toast error";$("msg").textContent="Deriv error: "+d.error.message;return}
     if(d.msg_type==="history"){
       const p=d.history?.prices||[],t=d.history?.times||[];
-      prices=p.map((q,i)=>({quote:Number(q),epoch:Number(t[i])}));scheduleRender();
+      prices=p.map((q,i)=>({quote:Number(q),epoch:Number(t[i])}));lastTick=prices.at(-1)||null;renderAnalysis();
       wsSend({ticks:symbol,subscribe:1,req_id:2});
     }else if(d.msg_type==="tick"&&d.tick){
       lastTick={quote:Number(d.tick.quote),epoch:Number(d.tick.epoch)};prices.push(lastTick);
